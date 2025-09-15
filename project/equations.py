@@ -80,11 +80,11 @@ xi_ER  = A_ER / tilde_Vol_ER                                     # SA:V ratio of
 
 # Reverse Potentials
 def bar_V_C(C):
-    result = ((R*T)/(zCa*F))*np.log(C_ext/C)-dV_C/1000        # Reverse potential wrt C (9)
+    result = ((R*T)/(zCa*F))*np.log(C_ext/C) * 1000 - dV_C      # Reverse potential wrt C (9)
     return result                                       
 
-def bar_V_C_ER(C):
-    result = ((R*T)/(zCa*F))*np.log(C_ext/C)-dV_C_ER/1000        # Reverse potential wrt ER (9)
+def bar_V_C_ER(C, C_ER):
+    result = ((R*T)/(zCa*F))*np.log(C_ER/C) * 1000 - dV_C_ER     # Reverse potential wrt ER (9)
     return result
 
 # === CRAC Dynamics ===
@@ -96,14 +96,13 @@ n_CRAC     = 4.2
 
 # Open CRAC channel current
 def I_CRAC(V, C):
-    I_crac = bar_g_CRAC * (V - bar_V_C(C))
+    I_crac = bar_g_CRAC * ((V - bar_V_C(C))) / 1000
     return I_crac
 
 def bar_rho_CRAC(C_ER, C_CRAC, n_CRAC):
     result = rho_CRAC_n + (rho_CRAC_p - rho_CRAC_n) * (1 - hill(C_ER, C_CRAC, n_CRAC))  # (25)
     return result
 
-# note: this is not to be passed into scipy.integrate
 def drho_CRAC_dt(t, rho_CRAC, C_ER, C_CRAC, n_CRAC):
     result = (bar_rho_CRAC(C_ER, C_CRAC, n_CRAC) - rho_CRAC) / tau_CRAC     # Density of active CRAC-channels (24)
     return result
@@ -135,8 +134,8 @@ def h_IP3R(C, P):
     return inactivation
 
 # note here: V and V_ER are to be kept at a constant V0 = V_ER as defined prior
-def I_IP3R(C, P, V, V_ER):
-    current = bar_g_IP3R * g_IP3R(C) * h_IP3R(C, P) * (V - V_ER - bar_V_C_ER(C))  # IP3R calcium current (28)
+def I_IP3R(C, C_ER, P, V, V_ER):
+    current = bar_g_IP3R * g_IP3R(C) * h_IP3R(C, P) * (V - V_ER - bar_V_C_ER(C, C_ER)) / 1000 # IP3R calcium current (28)
     return current
 
 # Inactivation dynamics
@@ -150,10 +149,10 @@ def dhIP3R_dt(t, C, P):
     return derivative
 
 def T_of_t(t):
-    if 10 <= t <= 200:  # stimulated from 10s to 200s
+    if 10 <= t <= 10000:  # stimulated from 10s to 200s
         return 1.6
     else:
-        return 0
+        return 1
 
 def dP_dt(t, C, P):
     derivative = beta_P * hill(C, C_P, n_P) * T_of_t(t) - gamma_P * P
@@ -161,7 +160,7 @@ def dP_dt(t, C, P):
 
 # === PMCA Dynamics ===
 # PMCA constants
-bar_I_PMCA = 1e-5
+bar_I_PMCA = 1e-5 # pA
 n_PMCA = 2      # hill coefficient
 tau_PMCA = 50   # s
 C_PMCA = 0.1    # uM;   half-activation calcium concentration
@@ -173,7 +172,7 @@ def dgPMCA_dt(t, C, C_PMCA, g_PMCA):
 # todo: implement solving for I_PMCA
 
 # === SERCA dynamics ===
-bar_I_SERCA = 3e-6     # pA
+bar_I_SERCA = 6e-6     # pA
 n_SERCA = 2             
 C_SERCA = 0.4          # uM
 
