@@ -45,11 +45,6 @@ b_ER_0     = 30000     # µM
 K_ER_b     = 100       # µM  
 
 # Second messengers
-# P0         = 8.7       # nM;           Resting IP3
-# beta_P     = 0.6       # nM/s;         IP3 production rate
-# gamma_P    = 0.01149   # /s;           IP3 degradation rate
-# C_P        = 0.5       # uM;           Calcium of half IP3 production
-# n_P        = 1         # unitless;     IP3 production Hill-coefficient
 P0         = 0.0087    # µM   (was 8.7 nM → ÷1000)
 beta_P     = 0.0006    # µM/s (was 0.6 nM/s → ÷1000)
 gamma_P    = 0.01149   # /s
@@ -155,7 +150,7 @@ def dhIP3R_dt(t, C, P):
     return derivative
 
 def T_of_t(t):
-    if 10 <= t <= 300:  # stimulated from 10s to 200s
+    if 10 <= t <= 200:  # stimulated from 10s to 200s
         return 1.6
     else:
         return 0
@@ -179,7 +174,7 @@ def dgPMCA_dt(t, C, C_PMCA, g_PMCA):
 
 # === SERCA dynamics ===
 bar_I_SERCA = 3e-6     # pA
-n_SERCA = 2
+n_SERCA = 2             
 C_SERCA = 0.4          # uM
 
 
@@ -200,10 +195,3 @@ def B_C(ca_conc, b, K):
 def free_calcium(ca_conc, b, K):
     free_ca = 1 / (1 + b / (ca_conc + K))
     return free_ca
-
-def dCER_dt(t, C, C_ER, P):
-
-    B_C_ER = B_C(C_ER, b_ER_0, K_ER_b)
-    dCERdt = (xi_ER * (rho_SERCA * I_SERCA(C) + rho_IP3R * I_IP3R(C, P, V0, V_ER_0))) / (zCa * F * (1 + B_C_ER))
-
-    return dCERdt
