@@ -57,7 +57,8 @@ number IPMCAbar=1e-17
 number ISERCAbar=3e-18
 number CSERCA=0.4e-6
 number nSERCA=2
-number Rcell=8e-6
+# Radius in um
+number Rcell=8
 number fV=0.01
 number fR=0.25
 number fA=30
@@ -78,19 +79,19 @@ number deltaVC=78e-3
 number deltaVCER=63e-3
 number Cext=2e-3
 
-# Protein densities in /m^2
-rhoIP3R=11.35e12
-rhoPMCA=68.57e12
-rhoCRACneg=0.5115e12
+# Protein densities in /um^2
+rhoIP3R=11.35
+rhoPMCA=68.57
+rhoCRACneg=0.5115
 
 ## Variable parameters
 # ER-SERCA density
-par rhoSERCA=700e12
+par rhoSERCA=700
 # Half-activation calcium concentration
 number CPMCA=0.1e-6
 # Resting active CRAC density
-par rhoCRAC0=0.6e12
-par rhoCRACpos=3.9e12
+par rhoCRAC0=0.6
+par rhoCRACpos=3.9
 
 ## Steady state equations
 # init rhoPMCA = -rhoCRAC0 * ICRAC0 / IPMCA0
@@ -101,7 +102,7 @@ init C = 0.1e-6
 init CER = 400e-6
 init gIP3R = 0.159
 init hIP3R = 0.26
-init rhoCRAC = 0.6e12
+init rhoCRAC = 0.6
 init gPMCA = 0.5
 init P = 9.8e-9
 
