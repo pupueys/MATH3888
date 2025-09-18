@@ -2,8 +2,9 @@
 H(x,y,z)=x^z/(x^z + y^z)
 
 ## Derived quantities
-VCbar = R * temp / (zCa * F) * ln(Cext / C) - deltaVC
-VCERbar = R * temp / (zCa * F) * ln(CER / C) - deltaVCER
+# Unit conversion from V to mV
+VCbar = R * temp / (zCa * F) * ln(Cext / C) * 1000 - deltaVC
+VCERbar = R * temp / (zCa * F) * ln(CER / C) * 1000 - deltaVCER
 ICRAC = gCRACbar * (V - VCbar)
 IIP3R = gIP3Rbar * gIP3R * hIP3R * (V - VER - VCERbar)
 IPMCA = IPMCAbar * gPMCA
@@ -19,43 +20,51 @@ Acell = 4 * pi * Rcell^2
 Vcyt = 4/3 * pi * Rcell^3 * (1 - fV - fR^3)
 VERtilda = 4/3 * pi * fV * Rcell^3
 AER = 4 * pi * fA * (3 * VERtilda / 4 / pi)^(2/3)
+# um-1
 zeta = Acell / Vcyt
 zetaER = AER / Vcyt
 zetaERC = AER / VERtilda
 
-aux out = H(C, CSERCA, nSERCA)
+aux out1 = (gIP3Rmax * H(C, CIP3Ract, nIP3Ract) - gIP3R) / tauIP3R
+aux out2 = (H(CIP3Rinh, C, nIP3Rinh) - hIP3R) / thetaIP3R
+aux out3 = (H(C, CPMCA, nPMCA) - gPMCA) / tauPMCA
+aux out4 = betaP * H(C, CP, nP) * state - gammaP * P
+aux out5 = (rhoCRACbar - rhoCRAC) / tauCRAC
+aux out6 = zetaER * (rhoSERCA * ISERCA + rhoIP3R * IIP3R) / (zCa * F * (1 + BCER)) * 1000
+aux out7 = -1/(zCa * F * (1 + BC)) * (zeta * rhoPMCA * IPMCA + zeta * rhoCRAC * ICRAC + zetaERC * rhoSERCA * ISERCA + zetaERC * rhoIP3R * IIP3R) * 1000
 
 ## Tracked variables
-dC/dt = -1/(zCa * F * (1 + BC)) * (zeta * rhoPMCA * IPMCA + zeta * rhoCRAC * ICRAC + zetaERC * rhoSERCA * ISERCA + zetaERC * rhoIP3R * IIP3R)
-dCER/dt = zetaER * (rhoSERCA * ISERCA + rhoIP3R * IIP3R) / (zCa * F * (1 + BCER))
+# Unit conversion: zeta in um-1, rho in um-2, I in fA, C in uM
+dC/dt = -1/(zCa * F * (1 + BC)) * (zeta * rhoPMCA * IPMCA + zeta * rhoCRAC * ICRAC + zetaERC * rhoSERCA * ISERCA + zetaERC * rhoIP3R * IIP3R) * 1000
+dCER/dt = zetaER * (rhoSERCA * ISERCA + rhoIP3R * IIP3R) / (zCa * F * (1 + BCER)) * 1000
 drhoCRAC/dt = (rhoCRACbar - rhoCRAC) / tauCRAC
 dgIP3R/dt = (gIP3Rmax * H(C, CIP3Ract, nIP3Ract) - gIP3R) / tauIP3R
 dhIP3R/dt = (H(CIP3Rinh, C, nIP3Rinh) - hIP3R) / thetaIP3R
 dgPMCA/dt = (H(C, CPMCA, nPMCA) - gPMCA) / tauPMCA
-dP/dt = betaP * H(C, CP, nP) - gammaP * P
+dP/dt = betaP * H(C, CP, nP) * state - gammaP * P
 
-## Fixed quantities (SI units, M, S)
+## Fixed quantities (um, uM, pS, fA, mV)
 number zCa=2
 number F=96485.3321
-number b0=100e-6
-number Kb=0.1e-6
-number bER0=30e-3
-number KERb=0.1e-3
-number CCRAC=169e-6
+number b0=100
+number Kb=0.1
+number bER0=30e3
+number KERb=0.1e3
+number CCRAC=169
 number nCRAC=4.2
 number tauCRAC=5
 number gIP3Rmax=0.81
-number CIP3Ract=0.21e-6
+number CIP3Ract=0.21
 number nIP3Ract=1.9
 number nIP3Rinh=3.9
-number CIP3Rib=52e-6
+number CIP3Rib=52
 number nIP3RC=4
-number PIP3RC=0.05e-6
-number gIP3Rbar=0.064e-12
+number PIP3RC=0.05
+number gIP3Rbar=0.064
 number nPMCA=2
-number IPMCAbar=1e-17
-number ISERCAbar=3e-18
-number CSERCA=0.4e-6
+number IPMCAbar=1e-2
+number ISERCAbar=3e-3
+number CSERCA=0.4
 number nSERCA=2
 # Radius in um
 number Rcell=8
@@ -65,21 +74,23 @@ number fA=30
 number tauIP3R=100e-3
 number thetaIP3R=300e-3
 number tauPMCA=50
-number P0=9.8e-9
-number betaP=0.6e-9
+number P0=8.7e-3
+number betaP=0.6e-3
 number gammaP=0.01149
-number CP=0.5e-6
+number CP=0.5
 number nP=1
-number gCRACbar=2e-15
-number V=-60e-3
-number VER=-60e-3
+number gCRACbar=2e-3
+number V=-60
+number VER=-60
 number temp=310
 number R=8.315
-number deltaVC=78e-3
-number deltaVCER=63e-3
-number Cext=2e-3
+number deltaVC=78
+number deltaVCER=63
+#number Cext=2e3
+par Cext=2e3
+par state=1
 
-# Protein densities in /um^2
+# Protein densities (/um^2)
 rhoIP3R=11.35
 rhoPMCA=68.57
 rhoCRACneg=0.5115
@@ -87,8 +98,8 @@ rhoCRACneg=0.5115
 ## Variable parameters
 # ER-SERCA density
 par rhoSERCA=700
-# Half-activation calcium concentration
-number CPMCA=0.1e-6
+# Half-activation calcium concentration (uM)
+number CPMCA=0.1
 # Resting active CRAC density
 par rhoCRAC0=0.6
 par rhoCRACpos=3.9
@@ -98,15 +109,18 @@ par rhoCRACpos=3.9
 # init rhoIP3R = -rhoSERCA * ISERCA0 / IIP3R0
 
 # Initial conditions
-init C = 0.1e-6
-init CER = 400e-6
+init C = 0.1
+init CER = 400
 init gIP3R = 0.159
-init hIP3R = 0.26
+# init hIP3R = 0.26
+init hIP3R = 0.0525
 init rhoCRAC = 0.6
 init gPMCA = 0.5
-init P = 9.8e-9
+init P = 8.7e-3
 
-@ total = 1000, dt = 0.001
+@ total=1000
+@ dt=0.01
+@ bound=1000
 
 done
 
