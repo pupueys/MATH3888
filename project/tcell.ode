@@ -1,13 +1,9 @@
-## Tracked variables
-dC/dt = -1/(zCa * F * (1 + BC)) * (zeta * rhoPMCA * IPMCA + zeta * rhoCRAC * ICRAC + zetaERC * rhoSERCA * ISERCA + zetaERC * rhoIP3R * IIP3R)
-dCER/dt = zetaER * (rhoSERCA * ISERCA + rhoIP3R * IIP3R) / (zCa * F * (1 + BCER))
-drhoCRAC/dt = (rhoCRACbar - rhoCRAC) / tauCRAC
-dgIP3R/dt = (gIP3Rmax * H(C, CIP3Ract, nIP3Ract) - gIP3R) / tauIP3R
-dhIP3R/dt = (H(CIP3Rinh, C, nIP3Rinh) - hIP3R) / thetaIP3R
-dgPMCA/dt = (H(C, CPMCA, nPMCA) - gPMCA) / tauPMCA
-dP/dt = betaP * H(C, CP, nP) - gammaP * P
+## Functions
+H(x,y,z)=x^z/(x^z + y^z)
 
 ## Derived quantities
+VCbar = R * temp / (zCa * F) * ln(Cext / C) - deltaVC
+VCERbar = R * temp / (zCa * F) * ln(CER / C) - deltaVCER
 ICRAC = gCRACbar * (V - VCbar)
 IIP3R = gIP3Rbar * gIP3R * hIP3R * (V - VER - VCERbar)
 IPMCA = IPMCAbar * gPMCA
@@ -26,11 +22,17 @@ AER = 4 * pi * fA * (3 * VERtilda / 4 / pi)^(2/3)
 zeta = Acell / Vcyt
 zetaER = AER / Vcyt
 zetaERC = AER / VERtilda
-VCbar = R * temp / (zCa * F) * ln(Cext / C) - deltaVC
-VCERbar = R * temp / (zCa * F) * ln(CER / C) - deltaVCER
 
-## Functions
-H(x,y,z)=x^z/(x^z + y^z)
+aux out = H(C, CSERCA, nSERCA)
+
+## Tracked variables
+dC/dt = -1/(zCa * F * (1 + BC)) * (zeta * rhoPMCA * IPMCA + zeta * rhoCRAC * ICRAC + zetaERC * rhoSERCA * ISERCA + zetaERC * rhoIP3R * IIP3R)
+dCER/dt = zetaER * (rhoSERCA * ISERCA + rhoIP3R * IIP3R) / (zCa * F * (1 + BCER))
+drhoCRAC/dt = (rhoCRACbar - rhoCRAC) / tauCRAC
+dgIP3R/dt = (gIP3Rmax * H(C, CIP3Ract, nIP3Ract) - gIP3R) / tauIP3R
+dhIP3R/dt = (H(CIP3Rinh, C, nIP3Rinh) - hIP3R) / thetaIP3R
+dgPMCA/dt = (H(C, CPMCA, nPMCA) - gPMCA) / tauPMCA
+dP/dt = betaP * H(C, CP, nP) - gammaP * P
 
 ## Fixed quantities (SI units, M, S)
 number zCa=2
@@ -103,7 +105,7 @@ init rhoCRAC = 0.6e12
 init gPMCA = 0.5
 init P = 9.8e-9
 
-@ total = 10, dt = 0.0000001
+@ total = 1000, dt = 0.001
 
 done
 
