@@ -63,26 +63,11 @@ xi_ER  = A_ER / tilde_Vol_ER
 
 # === Reverse Potentials ===
 def bar_V_C(C):
-    """
-    Nernst-like potential with safety clipping to avoid log(0) or log(neg).
-    C is in mol/m^3. Returns volts.
-    """
-    eps = 1e-12
-    # allow scalar or array
-    C_safe = np.maximum(C, eps)
-    # C_ext should be positive; clip as well
-    Cext_safe = max(C_ext, eps) if np.isscalar(C_ext) else np.maximum(C_ext, eps)
-    return (R * T / (zCa * F)) * np.log(Cext_safe / C_safe) - dV_C
+    return (R * T / (zCa * F)) * np.log(C_ext / C) - dV_C
 
 
 def bar_V_C_ER(C, C_ER):
-    """
-    ER-to-cytosol reversal potential with safety clipping.
-    """
-    eps = 1e-12
-    C_safe = np.maximum(C, eps)
-    C_ER_safe = np.maximum(C_ER, eps)
-    return (R * T / (zCa * F)) * np.log(C_ER_safe / C_safe) - dV_C_ER
+    return (R * T / (zCa * F)) * np.log(C_ER / C) - dV_C_ER
 
 # === CRAC Dynamics ===
 # CRAC constants
@@ -126,6 +111,12 @@ def h_IP3R(C, P):
 # note here: V and V_ER are to be kept at a constant V0 = V_ER as defined prior
 def I_IP3R(C, C_ER, P, V, V_ER):
     return bar_g_IP3R * g_IP3R(C) * h_IP3R(C, P) * (V - V_ER - bar_V_C_ER(C, C_ER))     # IP3R calcium current (28)
+
+def dgIP3R_dt(C, gIP3R):
+    return  (g_IP3R_max * hill(C, C_IP3R_act, n_IP3R_act) - gIP3R) / tau_IP3R 
+
+def dhIP3R_dt(C, P, hIP3R):
+    return (hill(C_IP3R_inh(P), C, n_IP3R_inh) - hIP3R) / theta_IP3R
 
 # === IP3 dynamics ===
 # Stimulation time

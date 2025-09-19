@@ -1,0 +1,114 @@
+## Functions
+H(x,y,z)=x^z/(x^z + y^z)
+
+## Derived quantities
+VCbar = R * temp / (zCa * F) * ln(Cext / C) - deltaVC
+VCERbar = R * temp / (zCa * F) * ln(CER / C) - deltaVCER
+ICRAC = gCRACbar * (V - VCbar)
+IIP3R = gIP3Rbar * gIP3R * hIP3R * (V - VER - VCERbar)
+IPMCA = IPMCAbar * gPMCA
+ISERCA = ISERCAbar * H(C, CSERCA, nSERCA)
+rhoCRACbar = rhoCRACneg + (rhoCRACpos - rhoCRACneg) * (1 - H(CER, CCRAC, nCRAC))
+# rhoCRACpos = fCRAC * rhoCRAC0
+fC = 1 / (1 + b0 / (C + Kb))
+BC = b0 * Kb / (C + Kb)^2
+BCER = bER0 * KERb / (CER + KERb)^2
+
+CIP3Rinh = CIP3Rib * H(P, PIP3RC, nIP3RC)
+Acell = 4 * pi * Rcell^2
+Vcyt = 4/3 * pi * Rcell^3 * (1 - fV - fR^3)
+VERtilda = 4/3 * pi * fV * Rcell^3
+AER = 4 * pi * fA * (3 * VERtilda / 4 / pi)^(2/3)
+zeta = Acell / Vcyt
+zetaER = AER / Vcyt
+zetaERC = AER / VERtilda
+
+aux out = H(C, CSERCA, nSERCA)
+
+## Tracked variables
+dC/dt = -1/(zCa * F * (1 + BC)) * (zeta * rhoPMCA * IPMCA + zeta * rhoCRAC * ICRAC + zetaERC * rhoSERCA * ISERCA + zetaERC * rhoIP3R * IIP3R)
+dCER/dt = zetaER * (rhoSERCA * ISERCA + rhoIP3R * IIP3R) / (zCa * F * (1 + BCER))
+drhoCRAC/dt = (rhoCRACbar - rhoCRAC) / tauCRAC
+dgIP3R/dt = (gIP3Rmax * H(C, CIP3Ract, nIP3Ract) - gIP3R) / tauIP3R
+dhIP3R/dt = (H(CIP3Rinh, C, nIP3Rinh) - hIP3R) / thetaIP3R
+dgPMCA/dt = (H(C, CPMCA, nPMCA) - gPMCA) / tauPMCA
+dP/dt = betaP * H(C, CP, nP) - gammaP * P
+
+## Fixed quantities (SI units, M, S)
+number zCa=2
+number F=96485.3321
+number b0=100e-3
+number Kb=0.1e-3
+number bER0=30
+number KERb=0.1
+number CCRAC=169e-3
+number nCRAC=4.2
+number tauCRAC=5
+number gIP3Rmax=0.81
+number CIP3Ract=0.21e-3
+number nIP3Ract=1.9
+number nIP3Rinh=3.9
+number CIP3Rib=52e-3
+number nIP3RC=4
+number PIP3RC=0.05e-3
+number gIP3Rbar=0.064e-12
+number nPMCA=2
+number IPMCAbar=1e-17
+number ISERCAbar=3e-18
+number CSERCA=0.4e-3
+number nSERCA=2
+number Rcell=8e-6
+number fV=0.01
+number fR=0.25
+number fA=30
+number tauIP3R=100e-3
+number thetaIP3R=300e-3
+number tauPMCA=50
+number P0=8.7e-6
+number betaP=0.6e-6
+number gammaP=0.01149
+number CP=0.5e-3
+number nP=1
+number gCRACbar=2e-15
+number V=-60e-3
+number VER=-60e-3
+number temp=310
+number R=8.315
+number deltaVC=78e-3
+number deltaVCER=63e-3
+number Cext=2
+
+# Protein densities in /m^2
+rhoIP3R=11.35e12
+rhoPMCA=68.57e12
+rhoCRACneg=0.5115e12
+
+## Variable parameters
+# ER-SERCA density
+par rhoSERCA=700e12
+# Half-activation calcium concentration
+number CPMCA=0.1e-3
+# Resting active CRAC density
+par rhoCRAC0=0.6e12
+par rhoCRACpos=3.9e12
+
+## Steady state equations
+# init rhoPMCA = -rhoCRAC0 * ICRAC0 / IPMCA0
+# init rhoIP3R = -rhoSERCA * ISERCA0 / IIP3R0
+
+# Initial conditions
+init C = 0.1e-3
+init CER = 400e-3
+init gIP3R = 0.159
+init hIP3R = 0.26
+init rhoCRAC = 0.6e12
+init gPMCA = 0.5
+init P = 8.7e-6
+
+@ total=1000
+@ dt=0.005
+@ bound=10e13
+
+done
+
+# The next step is to rewrite in a consistent set of units
