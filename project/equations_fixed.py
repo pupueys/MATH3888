@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 # === Hill function ===
 def hill(X, K, n):
     return X**n / (X**n + K**n)
+
     
 # === Constants (IN SI) ===
 # Cell geometry
@@ -61,9 +62,17 @@ xi     = A_cell / Vol_cyt
 xi_ERC = A_ER / Vol_cyt
 xi_ER  = A_ER / tilde_Vol_ER
 
+C_ER_0 = 400e-3                         # mol/m^3
+
+# Zero external calcium
+# zero_external_ca = C0 * np.exp(((V0-dV_C)*zCa*F)/(R*T))
+C_ext = zero_external_ca    # comment this to include external calcium.
+
 # === Reverse Potentials ===
 def bar_V_C(C):
-    return (R * T / (zCa * F)) * np.log(C_ext / C) - dV_C
+    result = (R * T / (zCa * F)) * np.log(C_ext / C) - dV_C
+    print(result)
+    return result
 
 
 def bar_V_C_ER(C, C_ER):
@@ -75,6 +84,9 @@ bar_g_CRAC = 0.002e-12  # S (0.002 pS)
 tau_CRAC   = 5.0        # s
 C_CRAC     = 400e-3     # mol/m^3
 n_CRAC     = 4.2
+f_CRAC     = 6.5
+
+# rho_CRAC_n = ((rho_CRAC_0)/hill(C_ER_0, C_CRAC, n_CRAC)) * (1-f_CRAC * (1-hill(C_ER_0, C_CRAC, n_CRAC)))
 
 # Open CRAC channel current
 def I_CRAC(V, C):
@@ -147,7 +159,6 @@ def I_SERCA(C):
 
 # === Calcium dynamics in ER ===
 # ER constants
-C_ER_0 = 400e-3                         # mol/m^3
 
 # Calcium buffer in ER (2) (5)
 def B_C(ca_conc, b, K):
@@ -156,3 +167,4 @@ def B_C(ca_conc, b, K):
 # Fraction of free Ca in ER (3) (6)
 def free_calcium(ca_conc, b, K):
     return 1 / (1 + b / (ca_conc + K))
+

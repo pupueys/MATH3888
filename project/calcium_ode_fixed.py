@@ -68,6 +68,8 @@ g_IP3R_0 = 0.05
 h_IP3R_0 = 0.9
 y0 = [C0, C_ER_0, V0, P0, rho_CRAC_0, g_PMCA_0, g_IP3R_0, h_IP3R_0]
 
+print(zero_external_ca)
+
 # # Solving
 t_span = (0, 300)
 t_eval = np.linspace(t_span[0], t_span[1], 1000)

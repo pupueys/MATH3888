@@ -19,7 +19,7 @@ T           = 310           # K;            Cell temperature
 V0          = -0.06         # V;            Resting membrane potential
 V_ER_0      = -0.06         # V;            Resting ER potential
 C0          = 1e-4          # mol/m^3;      Resting calcium
-C_ext       = 2000e-3       # mol/m^3;      Extracellular calcium
+C_ext       = 0# 2000e-3       # mol/m^3;      Extracellular calcium
 
 dV_C        = 0.078         # V;            Reverse potential shift
 dV_C_ER     = 0.063         # V;            ER-reversal potential shift
