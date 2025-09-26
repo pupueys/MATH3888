@@ -1,4 +1,4 @@
-from equations import *
+from equations_fixed import *
 
 import numpy as np
 from scipy.integrate import solve_ivp
@@ -67,6 +67,8 @@ g_PMCA_0 = 0.5
 g_IP3R_0 = 0.05
 h_IP3R_0 = 0.9
 y0 = [C0, C_ER_0, V0, P0, rho_CRAC_0, g_PMCA_0, g_IP3R_0, h_IP3R_0]
+
+print(zero_external_ca)
 
 # # Solving
 t_span = (0, 300)
