@@ -1,0 +1,72 @@
+# [Cai2+]
+dC/dt = J1 - J2
+# x0ik
+dx000/dt = -V1 - V3
+dx001/dt = V1 - V4
+dx010/dt = V3 - V2
+
+# J1
+J1 = c1 * (nu1 * x110^3 + nu2) * (CER - C)
+# J2
+J2 = nu3 * C^2 / (C^2 + k3^2)
+
+CER = (c0 - C) / c1
+# aux out1 = x100
+aux openprob = x110^3
+
+# x100 = P / d1 * x000
+# x101 = P / d1 * x001
+x110 = P / d1 * x010
+x011 = (1 - x000 - x001 - x010) / (1 + P / d1)
+# x111 = P / d1 * x011
+
+V1 = a4 * (C * x000 - d4 * x001)
+V2 = a4 * (C * x010 - d4 * x011)
+V3 = a5 * (C * x000 - d5 * x010)
+V4 = a5 * (C * x001 - d5 * x011)
+
+# P = [IP3] (uM)
+par P=0.5
+
+# c0 = total [Ca2+] (uM)
+par c0=2
+# c1 = ER volume to C volume
+par c1=0.185
+# nu1 = maximum Ca2+ flux (s^-1)
+par nu1=6
+# nu2 = Ca2+ leak flux constant (s^-1)
+par nu2=0.11
+# nu3 = max Ca2+ intake (uM^-1/s)
+par nu3=0.9
+# k3 = activation constant for ATP-Ca2+ pump (uM)
+par k3=0.1
+# ai = receptor binding constants (uM^-1/s)
+par a1=400
+par a2=0.2
+par a3=400
+par a4=0.05
+par a5=20
+# di = receptor dissociation constants (uM)
+par d1=0.13
+par d2=1.049
+par d3=943.4e-3
+par d4=144.5e-3
+par d5=82.34e-3
+
+init C=0.14
+
+@ bound=1000
+@ total=100
+@ dt=0.01
+@ parmin=0
+@ parmax=0.7
+@ autoxmin=0
+@ autoxmax=0.7
+@ autoymin=0
+@ autoymax=0.5
+@ ds=0.001
+@ dsmax=0.005
+@ Ntst=40
+@ Nmax=1000
+
+done
