@@ -41,9 +41,11 @@ def calcium_ode(t, y):
     # channel currents (in A)
     I_PMCA_chan  = bar_I_PMCA * g_PMCA
     I_CRAC_chan  = I_CRAC(V0, C)
-    I_SERCA_chan = I_SERCA(C)
-    #I_IP3R_chan  = I_IP3R(C, C_ER, P, V0, V0)
+    # I_SERCA_chan = I_SERCA(C)
+    I_SERCA_chan = 0
     I_IP3R_chan = bar_g_IP3R * g_IP3R * h_IP3R * (V0 - V0 - bar_V_C_ER(C, C_ER))
+
+    print(f"I_PMCA = {I_PMCA_chan}, I_CRAC = {I_CRAC_chan}, I_SERCA = {I_SERCA_chan}, I_IP3R = {I_IP3R_chan}")
 
     # membrane potential dynamics
     dVdt = (I_CRAC_chan + I_PMCA_chan + I_SERCA_chan + I_IP3R_chan) / (C_m * A_cell)   
@@ -68,13 +70,12 @@ g_IP3R_0 = 0.05
 h_IP3R_0 = 0.9
 y0 = [C0, C_ER_0, V0, P0, rho_CRAC_0, g_PMCA_0, g_IP3R_0, h_IP3R_0]
 
-print(zero_external_ca)
 
 # # Solving
 t_span = (0, 300)
 t_eval = np.linspace(t_span[0], t_span[1], 1000)
 
-sol = solve_ivp(calcium_ode, t_span, y0, t_eval=t_eval)
+sol = solve_ivp(calcium_ode, t_span, y0, t_eval=t_eval, )
 
 # plotting
 plt.plot(sol.t, sol.y[0] * 1e3, label='Cytosolic Calcium [C]')
@@ -138,3 +139,12 @@ axes[2].legend()
 plt.tight_layout()
 plt.show()
 
+# === Plot Active CRAC Channel Density ===
+plt.figure(figsize=(8, 4))
+plt.plot(t, rho_CRAC, label='Active CRAC Density')
+plt.xlabel('Time (s)')
+plt.ylabel('CRAC Channel Density')
+plt.title('Active CRAC Channel Density Over Time')
+plt.grid(True)
+plt.legend()
+plt.show()

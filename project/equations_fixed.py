@@ -66,12 +66,22 @@ C_ER_0 = 400e-3                         # mol/m^3
 
 # Zero external calcium
 # zero_external_ca = C0 * np.exp(((V0-dV_C)*zCa*F)/(R*T))
-C_ext = zero_external_ca    # comment this to include external calcium.
+zero_external_ca = 10e-7
+# C_ext = zero_external_ca    # comment this to include external calcium.
 
 # === Reverse Potentials ===
+def safe_log(x):
+    return np.log(max(x, 1e-12))
+
 def bar_V_C(C):
-    result = (R * T / (zCa * F)) * np.log(C_ext / C) - dV_C
-    print(result)
+    # # Clamp to avoid numerical errors
+    C_clamped = max(C, 1e-12)
+    C_ext_clamped = max(C_ext, 1e-12)
+    result = (R * T / (zCa * F)) * safe_log(C_ext_clamped / C_clamped) - dV_C
+
+    # k = (R*T)/(zCa*F)
+    # result = k * (((V0-dV_C)*zCa*F)/(R*T) + np.log(C0) - np.log(C)) - dV_C
+
     return result
 
 
