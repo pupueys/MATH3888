@@ -1,5 +1,8 @@
 # [Cai2+]
 dC/dt = J1 - J2
+# [IP3]
+dP/dt = nu4 * (C + (1 - alpha) * k4) / (C + k4) - Ir * P
+
 # x0ik
 dx000/dt = -V1 - V3 - V5
 dx001/dt = V1 - V4 - V7
@@ -48,8 +51,7 @@ CER = (c0 - C) / c1
 # aux out1 = x100
 aux openprob = x110^3
 
-# P = [IP3] (uM)
-par P=0.1
+par nu4=2.9
 
 # c0 = total [Ca2+] (uM)
 par c0=2
@@ -63,6 +65,7 @@ par nu2=0.11
 par nu3=0.9
 # k3 = activation constant for ATP-Ca2+ pump (uM)
 par k3=0.1
+par k4=1.1
 # ai = receptor binding constants (uM^-1/s)
 par a1=400
 par a2=0.2
@@ -76,7 +79,11 @@ par d3=943.4e-3
 par d4=144.5e-3
 par d5=82.34e-3
 
-init C=0.06180045
+par Ir=1
+par alpha=0.97
+
+init C=0.6
+init P=0.8
 init x000=0.25477404
 init x001=0.10894608
 init x010=0.19122117
@@ -98,5 +105,12 @@ init x110=0.14709321
 @ dsmax=0.005
 @ Ntst=40
 @ Nmax=1000
+
+@ xp=C
+@ yp=P
+@ xlo=0
+@ xhi=1
+@ ylo=0
+@ yhi=2
 
 done
